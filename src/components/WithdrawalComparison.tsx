@@ -38,6 +38,7 @@ export function WithdrawalComparison({ scenarios, selectedRate }: Props) {
               </div>
               <div className="space-y-1.5 text-xs">
                 <Row label="Anual nominal" value={formatCompact(s.annualNominal)} />
+                <Row label="Mensual nominal" value={formatCurrency(s.monthlyNominal)} />
                 <Row label="Anual (PV hoy)" value={formatCompact(s.annualPV)} />
                 <Row label="Mensual (PV hoy)" value={formatCurrency(s.monthlyPV)} accent />
               </div>

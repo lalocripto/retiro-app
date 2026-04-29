@@ -90,6 +90,7 @@ export function withdrawalScenarios(
     return {
       rate,
       annualNominal,
+      monthlyNominal: annualNominal / 12,
       annualPV,
       monthlyPV: annualPV / 12,
       label,

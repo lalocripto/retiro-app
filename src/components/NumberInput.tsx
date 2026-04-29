@@ -81,6 +81,7 @@ type SliderProps = {
 };
 
 export function SliderInput({ label, value, onChange, min, max, step = 1, suffix, help }: SliderProps) {
+  const clamped = Math.min(max, Math.max(min, value));
   return (
     <div>
       <label className="label-base justify-between">
@@ -88,17 +89,32 @@ export function SliderInput({ label, value, onChange, min, max, step = 1, suffix
           <span>{label}</span>
           {help && <HelpTooltip text={help} />}
         </span>
-        <span className="num text-gold-soft text-sm">
-          {value}
-          {suffix}
-        </span>
+        <div className="flex items-center gap-1">
+          <input
+            type="number"
+            value={Number.isFinite(value) ? value : ''}
+            min={min}
+            max={max}
+            step={step}
+            onChange={(e) => {
+              const raw = e.target.value;
+              if (raw === '') return;
+              const n = parseFloat(raw);
+              if (Number.isNaN(n)) return;
+              const next = Math.min(max, Math.max(min, n));
+              onChange(next);
+            }}
+            className="num bg-transparent text-gold-soft text-sm w-14 text-right border-b border-transparent hover:border-white/10 focus:border-gold/50 focus:outline-none px-1"
+          />
+          {suffix && <span className="num text-gold-soft text-sm">{suffix}</span>}
+        </div>
       </label>
       <input
         type="range"
         min={min}
         max={max}
         step={step}
-        value={value}
+        value={clamped}
         onChange={(e) => onChange(parseFloat(e.target.value))}
         className="w-full h-1.5 rounded-full bg-bg-muted appearance-none cursor-pointer accent-gold"
       />

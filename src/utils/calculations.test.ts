@@ -85,6 +85,7 @@ describe('withdrawalScenarios', () => {
     const out = withdrawalScenarios(1_000_000, 0, 10);
     const four = out.find((s) => s.rate === 4)!;
     expect(four.annualNominal).toBeCloseTo(40000, 4);
+    expect(four.monthlyNominal).toBeCloseTo(40000 / 12, 4);
     expect(four.annualPV).toBeCloseTo(40000, 4);
     expect(four.monthlyPV).toBeCloseTo(40000 / 12, 4);
   });

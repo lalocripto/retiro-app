@@ -33,6 +33,7 @@ export type YearProjection = {
 export type WithdrawalScenario = {
   rate: number;
   annualNominal: number;
+  monthlyNominal: number;
   annualPV: number;
   monthlyPV: number;
   label: 'seguro' | 'estándar' | 'agresivo';
