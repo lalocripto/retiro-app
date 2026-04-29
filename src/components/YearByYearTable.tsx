@@ -4,9 +4,10 @@ import { formatCurrency, formatPercent } from '../utils/format';
 
 type Props = {
   projections: YearProjection[];
+  withdrawalRate: number;
 };
 
-export function YearByYearTable({ projections }: Props) {
+export function YearByYearTable({ projections, withdrawalRate }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   const exportCSV = () => {
@@ -17,8 +18,10 @@ export function YearByYearTable({ projections }: Props) {
       'Valor presente',
       'Aportado este año',
       'Total aportado',
+      'Intereses del año',
       'Ganancia acumulada',
-      '% crecimiento',
+      `Retiro anual @ ${withdrawalRate}%`,
+      '% utilidad vs año anterior',
     ].join(',');
     const rows = projections.map((p) =>
       [
@@ -28,7 +31,9 @@ export function YearByYearTable({ projections }: Props) {
         round(p.totalPresentValue),
         round(p.contributedThisYear),
         round(p.totalContributed),
+        round(p.interestThisYear),
         round(p.cumulativeGain),
+        round(p.totalNominal * (withdrawalRate / 100)),
         p.yearGrowthPct.toFixed(2),
       ].join(','),
     );
@@ -73,28 +78,35 @@ export function YearByYearTable({ projections }: Props) {
                 <Th align="right">Valor nominal</Th>
                 <Th align="right">Valor presente</Th>
                 <Th align="right">Aportado año</Th>
-                <Th align="right">Total aportado</Th>
+                <Th align="right">Intereses año</Th>
                 <Th align="right">Ganancia acum.</Th>
-                <Th align="right">% año</Th>
+                <Th align="right">Retiro @ {withdrawalRate}%</Th>
+                <Th align="right">% utilidad año</Th>
               </tr>
             </thead>
             <tbody>
-              {projections.map((p) => (
-                <tr key={p.year} className="border-t border-white/5 hover:bg-bg-hover/40">
-                  <Td>{p.year}</Td>
-                  <Td>{p.age}</Td>
-                  <Td align="right" className="text-gold-soft">{formatCurrency(p.totalNominal)}</Td>
-                  <Td align="right" className="text-sky">{formatCurrency(p.totalPresentValue)}</Td>
-                  <Td align="right">{formatCurrency(p.contributedThisYear)}</Td>
-                  <Td align="right">{formatCurrency(p.totalContributed)}</Td>
-                  <Td align="right" className={p.cumulativeGain >= 0 ? 'text-emerald-300' : 'text-rose'}>
-                    {formatCurrency(p.cumulativeGain)}
-                  </Td>
-                  <Td align="right" className={p.yearGrowthPct >= 0 ? 'text-emerald-300' : 'text-rose'}>
-                    {p.year === 0 ? '—' : formatPercent(p.yearGrowthPct, 2)}
-                  </Td>
-                </tr>
-              ))}
+              {projections.map((p) => {
+                const annualWithdrawal = p.totalNominal * (withdrawalRate / 100);
+                return (
+                  <tr key={p.year} className="border-t border-white/5 hover:bg-bg-hover/40">
+                    <Td>{p.year}</Td>
+                    <Td>{p.age}</Td>
+                    <Td align="right" className="text-gold-soft font-semibold">{formatCurrency(p.totalNominal)}</Td>
+                    <Td align="right" className="text-slate-400">{formatCurrency(p.totalPresentValue)}</Td>
+                    <Td align="right">{formatCurrency(p.contributedThisYear)}</Td>
+                    <Td align="right" className={p.interestThisYear >= 0 ? 'text-emerald-300' : 'text-rose'}>
+                      {p.year === 0 ? '—' : formatCurrency(p.interestThisYear)}
+                    </Td>
+                    <Td align="right" className={p.cumulativeGain >= 0 ? 'text-emerald-300' : 'text-rose'}>
+                      {formatCurrency(p.cumulativeGain)}
+                    </Td>
+                    <Td align="right" className="text-sky">{formatCurrency(annualWithdrawal)}</Td>
+                    <Td align="right" className={p.yearGrowthPct >= 0 ? 'text-emerald-300' : 'text-rose'}>
+                      {p.year === 0 ? '—' : formatPercent(p.yearGrowthPct, 2)}
+                    </Td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

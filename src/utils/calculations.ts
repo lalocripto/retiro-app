@@ -29,6 +29,7 @@ export function projectPortfolio(inputs: PlannerInputs): YearProjection[] {
     contributedThisYear: 0,
     totalContributed: 0,
     cumulativeGain: 0,
+    interestThisYear: 0,
     yearGrowthPct: 0,
   });
 
@@ -57,7 +58,8 @@ export function projectPortfolio(inputs: PlannerInputs): YearProjection[] {
     const totalNominal = sumValues(balances);
     const totalPresentValue = totalNominal / Math.pow(1 + inflation / 100, year);
     const cumulativeGain = totalNominal - totalContributed - initialCapital;
-    const yearGrowthPct = startTotal > 0 ? ((totalNominal - startTotal - contributedThisYear) / startTotal) * 100 : 0;
+    const interestThisYear = totalNominal - startTotal - contributedThisYear;
+    const yearGrowthPct = startTotal > 0 ? (interestThisYear / startTotal) * 100 : 0;
 
     projections.push({
       year,
@@ -68,6 +70,7 @@ export function projectPortfolio(inputs: PlannerInputs): YearProjection[] {
       contributedThisYear,
       totalContributed,
       cumulativeGain,
+      interestThisYear,
       yearGrowthPct,
     });
 

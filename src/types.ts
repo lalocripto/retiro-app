@@ -27,6 +27,7 @@ export type YearProjection = {
   contributedThisYear: number;
   totalContributed: number;
   cumulativeGain: number;
+  interestThisYear: number;
   yearGrowthPct: number;
 };
 

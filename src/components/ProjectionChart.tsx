@@ -3,7 +3,7 @@ import {
   ResponsiveContainer,
   AreaChart,
   Area,
-  LineChart,
+  ComposedChart,
   Line,
   XAxis,
   YAxis,
@@ -54,7 +54,7 @@ export function ProjectionChart({ projections, assets }: Props) {
         <h2 className="heading-serif text-base">Proyección del portafolio</h2>
         <div className="flex items-center gap-1.5 text-xs">
           <ToggleButton active={mode === 'overlay'} onClick={() => setMode('overlay')}>
-            Líneas
+            Nominal
           </ToggleButton>
           <ToggleButton active={mode === 'stacked'} onClick={() => setMode('stacked')}>
             Por activo
@@ -69,10 +69,10 @@ export function ProjectionChart({ projections, assets }: Props) {
       <div className="h-[380px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           {mode === 'overlay' ? (
-            <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+            <ComposedChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="g-nominal" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#c9a961" stopOpacity={0.4} />
+                  <stop offset="0%" stopColor="#c9a961" stopOpacity={0.45} />
                   <stop offset="100%" stopColor="#c9a961" stopOpacity={0} />
                 </linearGradient>
               </defs>
@@ -94,38 +94,42 @@ export function ProjectionChart({ projections, assets }: Props) {
               <Tooltip content={<CustomTooltip assets={assets} mode="overlay" />} />
               <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
               <ReferenceLine y={0} stroke="rgba(255,255,255,0.1)" />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="nominal"
                 name="Valor nominal"
                 stroke="#c9a961"
-                strokeWidth={2.4}
+                strokeWidth={3.5}
+                fill="url(#g-nominal)"
+                fillOpacity={1}
                 dot={false}
-                activeDot={{ r: 5, strokeWidth: 0, fill: '#e0c98a' }}
+                activeDot={{ r: 6, strokeWidth: 0, fill: '#e0c98a' }}
                 isAnimationActive
               />
               <Line
                 type="monotone"
                 dataKey="presentValue"
                 name="Valor presente"
-                stroke="#60a5fa"
-                strokeWidth={2}
-                strokeDasharray="5 5"
+                stroke="#94a3b8"
+                strokeWidth={1.25}
+                strokeDasharray="4 4"
+                strokeOpacity={0.7}
                 dot={false}
-                activeDot={{ r: 4, strokeWidth: 0, fill: '#93c5fd' }}
+                activeDot={{ r: 3, strokeWidth: 0, fill: '#cbd5e1' }}
                 isAnimationActive
               />
               <Line
                 type="monotone"
                 dataKey="contributed"
                 name="Total aportado"
-                stroke="#64748b"
-                strokeWidth={1.5}
+                stroke="#475569"
+                strokeWidth={1}
                 strokeDasharray="2 4"
+                strokeOpacity={0.6}
                 dot={false}
                 isAnimationActive
               />
-            </LineChart>
+            </ComposedChart>
           ) : (
             <AreaChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />

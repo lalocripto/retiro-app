@@ -47,7 +47,7 @@ export default function App() {
               />
               <ProjectionChart projections={projections} assets={inputs.assets} />
               <WithdrawalComparison scenarios={scenarios} selectedRate={inputs.withdrawalRate} />
-              <YearByYearTable projections={projections} />
+              <YearByYearTable projections={projections} withdrawalRate={inputs.withdrawalRate} />
             </>
           )}
 

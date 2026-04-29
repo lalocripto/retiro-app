@@ -15,71 +15,95 @@ export function ResultsCards({ projections, withdrawalRate, inflation, initialCa
   const inflationFactor = Math.pow(1 + inflation / 100, horizon);
 
   const annualNominal = final.totalNominal * (withdrawalRate / 100);
+  const monthlyNominal = annualNominal / 12;
   const annualPV = annualNominal / inflationFactor;
   const monthlyPV = annualPV / 12;
 
-  const gainPct = final.totalContributed + initialCapital > 0
-    ? (final.cumulativeGain / (final.totalContributed + initialCapital)) * 100
-    : 0;
+  const animatedNominal = useAnimatedNumber(final.totalNominal, 600);
+  const animatedMonthlyNominal = useAnimatedNumber(monthlyNominal, 600);
+  const animatedGain = useAnimatedNumber(final.cumulativeGain, 600);
+
+  const gainPct =
+    final.totalContributed + initialCapital > 0
+      ? (final.cumulativeGain / (final.totalContributed + initialCapital)) * 100
+      : 0;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-      <Card
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <HeroCard
         label="Valor nominal final"
-        value={final.totalNominal}
-        format="compact"
-        tone="gold"
-        sub={`a ${horizon} años`}
+        value={formatCompact(animatedNominal)}
+        sub={`a ${horizon} años · ${formatCurrency(final.totalNominal)}`}
       />
-      <Card
-        label="Valor presente neto"
-        value={final.totalPresentValue}
-        format="compact"
+      <HeroCard
+        label={`Retiro mensual nominal @ ${withdrawalRate}%`}
         tone="sky"
+        value={formatCompact(animatedMonthlyNominal)}
+        sub={`${formatCurrency(monthlyNominal)} / mes en el año ${horizon}`}
+      />
+      <HeroCard
+        label="Ganancia acumulada"
+        tone="emerald"
+        value={formatCompact(animatedGain)}
+        sub={`${formatPercent(gainPct)} sobre lo aportado`}
+      />
+
+      <SmallCard
+        label="Valor presente (hoy)"
+        value={formatCompact(final.totalPresentValue)}
         sub={`descontado ${formatPercent(inflation)}/año`}
       />
-      <Card
-        label="Retiro anual (PV)"
-        value={annualPV}
-        format="currency"
-        tone="default"
-        sub={`${withdrawalRate}% de retiro`}
+      <SmallCard
+        label="Retiro anual nominal"
+        value={formatCompact(annualNominal)}
+        sub={`en el año ${horizon}`}
       />
-      <Card
-        label="Retiro mensual (PV)"
-        value={monthlyPV}
-        format="currency"
-        tone="default"
-        sub="poder de compra hoy"
-      />
-      <Card
-        label="Ganancia acumulada"
-        value={final.cumulativeGain}
-        format="compact"
-        tone="emerald"
-        sub={`${formatPercent(gainPct)} sobre lo aportado`}
+      <SmallCard
+        label="Equivalente en poder de compra hoy"
+        value={`${formatCompact(annualPV)} / año`}
+        sub={`${formatCurrency(monthlyPV)} / mes`}
       />
     </div>
   );
 }
 
-type CardProps = {
+function HeroCard({
+  label,
+  value,
+  sub,
+  tone = 'gold',
+}: {
   label: string;
-  value: number;
-  format: 'currency' | 'compact';
+  value: string;
   sub?: string;
-  tone: 'gold' | 'sky' | 'default' | 'emerald';
-};
-
-function Card({ label, value, format, sub, tone }: CardProps) {
-  const animated = useAnimatedNumber(value, 500);
-  const valueText = format === 'compact' ? formatCompact(animated) : formatCurrency(animated);
+  tone?: 'gold' | 'sky' | 'emerald';
+}) {
   const toneClass =
-    tone === 'gold' ? 'text-gold-soft' : tone === 'sky' ? 'text-sky' : tone === 'emerald' ? 'text-emerald-300' : 'text-slate-100';
+    tone === 'gold'
+      ? 'text-gold-soft'
+      : tone === 'sky'
+        ? 'text-sky'
+        : 'text-emerald-300';
+  const ringClass =
+    tone === 'gold'
+      ? 'ring-1 ring-gold/20 shadow-glow'
+      : tone === 'sky'
+        ? 'ring-1 ring-sky/15'
+        : 'ring-1 ring-emerald-400/15';
   return (
-    <div className="card p-4">
+    <div className={`card p-5 ${ringClass}`}>
       <div className="text-[10px] uppercase tracking-wider text-slate-500 mb-2">{label}</div>
-      <div className={`num text-xl md:text-2xl font-semibold ${toneClass} truncate`}>{valueText}</div>
+      <div className={`num text-3xl md:text-4xl font-semibold ${toneClass} truncate`}>{value}</div>
+      {sub && <div className="text-[11px] text-slate-500 mt-2">{sub}</div>}
+    </div>
+  );
+}
+
+function SmallCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div className="card p-3.5 bg-bg-elevated/60">
+      <div className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">{label}</div>
+      <div className="num text-base md:text-lg font-medium text-slate-300 truncate">{value}</div>
       {sub && <div className="text-[10px] text-slate-500 mt-1">{sub}</div>}
     </div>
   );
