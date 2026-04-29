@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-bg text-slate-100 font-sans antialiased;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(96, 165, 250, 0.08), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 95% 10%, rgba(201, 169, 97, 0.06), transparent 60%);
+  background-attachment: fixed;
+}
+
+@layer components {
+  .card {
+    @apply bg-bg-elevated border border-white/5 rounded-2xl;
+  }
+  .input-base {
+    @apply w-full bg-bg-muted border border-white/5 rounded-lg px-3 py-2
+           text-slate-100 font-mono tabular-nums text-sm
+           focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/40
+           transition-colors;
+  }
+  .label-base {
+    @apply block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg
+           text-sm font-medium transition-all border;
+  }
+  .btn-primary {
+    @apply btn bg-gold/15 border-gold/30 text-gold-soft hover:bg-gold/25 hover:border-gold/50;
+  }
+  .btn-secondary {
+    @apply btn bg-bg-muted border-white/5 text-slate-300 hover:bg-bg-hover hover:text-slate-100;
+  }
+  .btn-danger {
+    @apply btn bg-rose/10 border-rose/30 text-rose hover:bg-rose/20;
+  }
+  .heading-serif {
+    @apply font-serif tracking-tight text-slate-100;
+  }
+  .num {
+    @apply font-mono tabular-nums;
+  }
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Hide spinners on number inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Recharts overrides */
+.recharts-default-tooltip {
+  background-color: #11172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+}
